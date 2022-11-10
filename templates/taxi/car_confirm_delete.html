@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="confirm_delete">
+    <h2>Delete  {{ car.model }}?</h2>
+    <form action="" method="post">
+      {% csrf_token %}
+
+      <input type="submit" value="Yes" class="btn btn-danger">
+      <a href="{% url "taxi:car-detail" pk=car.id %}" class="btn btn-primary" role="button">Cancel</a>
+    </form>
+  </div>
+{% endblock %}
+
+
+{#<!-- Button trigger modal -->#}
+{#<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">#}
+{#  Launch demo modal#}
+{#</button>#}
+{##}
+{#<!-- Modal -->#}
+{#<div class="modal fade" {% block modal-id %} id="deleteModal" {% endblock modal-id %} tabindex="-1"#}
+{#     aria-labelledby="deleteModalLabel" aria-hidden="true">#}
+{#  <div class="modal-dialog">#}
+{#    <div class="modal-content">#}
+{#      <div class="modal-header">#}
+{#        <h1 class="modal-title fs-5" id="deleteModalLabel"> &nbsp; Modal title</h1>#}
+{#        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>#}
+{#      </div>#}
+{#      <div class="confirm_delete">#}
+{#        <h2>Delete {{ car.model }}?</h2>#}
+{#        <form {% block Action %}#}
+{#          action="{% url "taxi:driver-delete"  pk=driver.id %}"#}
+{#        {% endblock %} method="post">#}
+{#          {% csrf_token %}#}
+{##}
+{#          <input type="submit" value="Yes" class="btn btn-danger">#}
+{#          <a href="{% url "taxi:car-detail" pk=car.id %}" class="btn btn-primary" role="button">Cancel</a>#}
+{#        </form>#}
+{#      </div>#}
+{##}
+{#    </div>#}
+{#  </div>#}
+{#</div>#}
