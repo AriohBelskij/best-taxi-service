@@ -55,9 +55,16 @@
               </a>
             </td>
             <td>
-              <a href="{% url 'taxi:manufacturer-delete' pk=manufacturer.id %}" class="link_color">
-                🗑
+              {#              <a href="{% url 'taxi:manufacturer-delete' pk=manufacturer.id %}" class="link_color">#}
+              {#                🗑#}
+              {#              </a>#}
+              <a class="btn btn-danger link-to-page" data-mdb-toggle="modal"
+                 data-mdb-target="#delete{{ manufacturer.id }}">
+                <i class="fas fa-trash-alt"></i>
               </a>
+              {% include "taxi/manufacturer_confirm_delete.html" %}
+
+
             </td>
           {% endif %}
         </tr>

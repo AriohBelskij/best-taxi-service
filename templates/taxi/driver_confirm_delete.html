@@ -1,10 +1,33 @@
-{% extends "base.html" %}
+<div class="modal fade" id="delete{{ driver.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">U are win 10000$ click <a
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley">her</a></h5>
+        {#        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>#}
+      </div>
+      <div class="modal-body">
+        {% if user.id != driver.id %}
+          <div class="confirm_delete"><p>Delete <strong>{{ driver.username }}</strong>?</p>
+            <p>He is drive {{ driver.cars.all.count }} car </p></div>
+          </div>
+        {% else %}
+          <div class="confirm_delete"><p> &nbsp;&nbsp;&nbsp;Are u sure,</p>
+            <p>
+              <strong>
 
-{% block content %}
-  <h1>Are u sure and really wanna delete {{ driver.username }}?</h1>
-  <form action="" method="post">
-    {% csrf_token %}
+                &nbsp;&nbsp;&nbsp;Delete ur &nbsp;&nbsp;account?</strong>
+            </p>
+          </div>
+        {% endif %}
 
-    <input type="submit" value="Yes" class="btn btn-danger">
-  </form>
-{% endblock %}
+      <div class="modal-footer">
+        <form action="{% url 'taxi:driver-delete' pk=driver.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Yes, delete</button>
+          <button type="button" class="btn btn-success" data-mdb-dismiss="modal">cancel</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>

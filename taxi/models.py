@@ -51,12 +51,16 @@ class CarComments(models.Model):
         Car, on_delete=models.CASCADE, related_name="comments_car"
     )
     driver = models.ForeignKey(
-        Driver, on_delete=models.CASCADE, default=None, blank=True, null=True
+        Driver, on_delete=models.CASCADE, default=None, blank=True, null=True, related_name="author_comment"
     )
     text = models.TextField(verbose_name="text")
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     likes = models.ManyToManyField(Driver, related_name="car_comment")
+
+    @property
+    def likes_count(self):
+        return self.likes.all().count()
 
     class Meta:
         ordering = ("-created",)

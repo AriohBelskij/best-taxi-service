@@ -119,6 +119,8 @@ class CarListView(LoginRequiredMixin, generic.ListView):
 class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
     model = Car
     form_class = CarCommentForm
+    queryset = Car.objects.all().prefetch_related("comments_car__likes__car_comment")
+
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -138,6 +140,7 @@ class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
         self.object.driver = self.request.user
         self.object.save()
         return super().form_valid(form)
+
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
@@ -259,6 +262,9 @@ class CommentDeleteView(SweetifySuccessMixin, generic.DeleteView):
     success_url = reverse_lazy("taxi:car-list")
     success_message = "Comment successfully deleted"
 
+
+
+
     def get_success_url(self, **kwargs):
         return reverse_lazy(
             "taxi:car-detail", kwargs={"pk": self.get_object().car.id}
@@ -303,9 +309,10 @@ class DriverSettingsView(
         return HttpResponseRedirect("/")
 
 
+@login_required
 def like_and_unlike(request, id, pk):  # noqa
     comment = get_object_or_404(
-        CarComments, id=request.POST.get("car.comment.id"), pk=pk
+        CarComments.objects, id=request.POST.get("car.comment.id"), pk=pk
     )
     if comment.likes.filter(id=request.user.id).exists():
         comment.likes.remove(request.user)

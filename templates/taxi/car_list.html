@@ -35,7 +35,7 @@
       {% for car in car_list %}
         <tr>
           <td>{{ car.id }}</td>
-          <td><a href="{% url "taxi:car-detail" pk=car.id %} " class="link_color">{{ car.model }}</a></td>
+          <td><a href="{% url "taxi:car-detail" pk=car.id %} " class="link_color">{{ car.model }} </a></td>
           <td><a href="{% url "taxi:manufacturer-detail" pk=car.manufacturer.pk %}"
                  class="link_color">{{ car.manufacturer.name }}</a></td>
         </tr>
