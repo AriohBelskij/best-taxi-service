@@ -1,23 +1,24 @@
 <div class="modal fade" id="delete{{ driver.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">U are win 10000$ click <a
-            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley">her</a></h5>
-        {#        <button type="button" class="btn-close" data-mdb-dismiss="modal" aria-label="Close"></button>#}
+      <div class="modal-header window-header">
+        <h5 class="modal-title window-title" id="exampleModalLabel">U are win 10000$ click <a
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley">here</a></h5>
       </div>
       <div class="modal-body">
         {% if user.id != driver.id %}
-          <div class="confirm_delete"><p>Delete <strong>{{ driver.username }}</strong>?</p>
-            <p>He is drive {{ driver.cars.all.count }} car </p></div>
+          <div class="confirm_delete">
+            <h4 class="window-text">Delete <strong>{{ driver.username }}</strong>?</h4>
+            <h5 class="window-text">He is drive {{ driver.cars.all.count }} car!</h5>
+          </div>
+
           </div>
         {% else %}
-          <div class="confirm_delete"><p> &nbsp;&nbsp;&nbsp;Are u sure,</p>
-            <p>
+          <div class="confirm_delete">
+            <h3>
               <strong>
-
-                &nbsp;&nbsp;&nbsp;Delete ur &nbsp;&nbsp;account?</strong>
-            </p>
+                Delete ur account?</strong>
+            </h3>
           </div>
         {% endif %}
 

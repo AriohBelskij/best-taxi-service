@@ -51,6 +51,8 @@
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
   <link rel="icon" type="image/x-icon" href="../static/images/favicon.png">
+  <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
+  <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
 </head>
 
 <body>
@@ -60,7 +62,7 @@
     <div>
       {% if user.is_authenticated %}
         <div class="logout">
-          <div>User: <a href="{{ user.get_absolute_url }}">{{ user.get_username }}</a></div>
+          <div><span class="link_color">User:</span> <a href="{{ user.get_absolute_url }}">{{ user.get_username }}</a></div>
           <div><a href="{% url 'logout' %}?next={{ request.path }}">Logout</a></div>
         </div>
       {% else %}

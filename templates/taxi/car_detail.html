@@ -7,8 +7,7 @@
   </h1>
   {% load static %}
 
-  <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
-  <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
+
 
   {% load ratings %}
 
@@ -46,7 +45,9 @@
     {% for driver in car.drivers.all %}
       {% if driver.first_name %}
         <li class="driver_item">
-          <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          <a href="{% url "taxi:driver-detail" pk=driver.id %}">
+            <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          </a>
           <span class="driver_name">
             {{ driver.first_name }} {{ driver.last_name }}
             <span class="driver_nickname">
@@ -56,7 +57,9 @@
         </li>
       {% else %}
         <li class="driver_item">
-          <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          <a href="{% url "taxi:driver-detail" pk=driver.id %}">
+            <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          </a>
           <span class="driver_nickname">
             {{ driver.username }}
           </span>

@@ -242,4 +242,13 @@ body {
 
 .window-header {
  background-color: #343A40 !important;
+    text-decoration-color: whitesmoke;
+}
+.window-title {
+    color: #ffffff;
+    margin: auto;
+}
+
+.window-text{
+    margin: auto;
 }

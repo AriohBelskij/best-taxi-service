@@ -316,7 +316,7 @@ def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
 @login_required
-def like_and_unlike(request, id, pk):
+def like_and_unlike(request, *args, **kwargs):
     comment = get_object_or_404(
         CarComments, id=request.POST.get("ind") # ind - because i take it in my js script
     )
@@ -333,4 +333,4 @@ def like_and_unlike(request, id, pk):
         html = render_to_string("taxi/like-section.html", context=context, request=request)
         print(223)
         return JsonResponse({"form": html})
-    return HttpResponseRedirect(reverse_lazy("taxi: car-detail"), args=[pk])
+    return HttpResponseRedirect(reverse_lazy("taxi: car-detail"), args=[kwargs["pk"]])

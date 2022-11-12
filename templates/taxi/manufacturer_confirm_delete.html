@@ -2,25 +2,15 @@
   <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
       <div class="modal-header window-header">
-        <h5 class="modal-title" id="exampleModalLabel" ></h5>
+        <h5 class="modal-title window-title" id="exampleModalLabel" >Confirm deletion</h5>
       </div>
-
       <div class="modal-body">
-        {% if user.id != driver.id %}
-          <div class="confirm_delete"><p>Are u sure about
-        delete <strong>{{ manufacturer.name }}?</strong></p>
-        <strong><p>also all car from <strong>{{ manufacturer.name }}</strong> will be delete!</p></strong></p>
+        <div class="confirm_delete">
+          <h3 class="window-text">Delete  <strong>{{ manufacturer.name }}</strong>?</h3>
+          <p><strong>Also all cars from manufacturer will be delete!</strong></p>
+          </div>
             </div>
-          </div>
-        {% else %}
-          <div class="confirm_delete"><p> &nbsp;&nbsp;&nbsp;Are u sure,</p>
-            <p>
-              <strong>
 
-                &nbsp;&nbsp;&nbsp;Delete ur &nbsp;&nbsp;account?</strong>
-            </p>
-          </div>
-        {% endif %}
 
       <div class="modal-footer">
         <form action="{% url "taxi:manufacturer-delete" pk=manufacturer.id %}" method="post">
