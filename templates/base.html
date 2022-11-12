@@ -10,14 +10,43 @@
         integrity="sha384-TX8t27EcRE3e/ihU7zmQxVncDAy5uIKz4rEkgIXeMed4M0jlfIDPvg6uqKI2xXr2"
         crossorigin="anonymous">
   <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<link
+  <link
       href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.css"
       rel="stylesheet"
-      />
- <script
+  />
+  <script
       type="text/javascript"
-      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js"
-      ></script>
+      src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.0.0/mdb.min.js">
+
+  </script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js">
+  </script>
+  <script type="text/javascript">
+    $(document).ready(function(event){
+       $(document).on('click', '#like', function(event){
+          event.preventDefault();
+          let pk = $(this).attr('value');
+
+          let make_url = `comment/${pk}/like/`
+          $.ajax({
+             type: "POST",
+              url: make_url,
+              data: {"ind": pk, "csrfmiddlewaretoken": "{{ csrf_token }}" },
+              dataType: "json",
+              success: function(response){
+                  $(`#like-section-${pk}`).html(response["form"])
+                  console.log($(`#like-section-${pk}`).html(response["form"]))
+              },
+              error: function (rs, e){
+                 console.log("12345")
+                  console.log(rs.responseText);
+              },
+
+
+          });
+       });
+    });
+  </script>
   <!-- Add additional CSS in static file -->
   {% load static %}
   <link rel="stylesheet" href="{% static 'css/styles.css' %}">
@@ -54,8 +83,6 @@
       <div class="content_detail">
 
         {% block content %}{% endblock %}
-
-
 
 
         {% load sweetify %}

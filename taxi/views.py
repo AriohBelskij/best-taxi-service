@@ -1,7 +1,7 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
 from django.urls import reverse_lazy, reverse
 from django.utils.decorators import method_decorator
@@ -9,6 +9,7 @@ from django.views.generic.edit import FormMixin
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from sweetify.views import SweetifySuccessMixin
+from django.template.loader import render_to_string
 
 from .models import Driver, Car, Manufacturer, CarComments
 from .forms import (
@@ -90,9 +91,10 @@ class ManufacturerUpdateView(
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class ManufacturerDeleteView(generic.DeleteView):
+class ManufacturerDeleteView(SweetifySuccessMixin, generic.DeleteView):
     model = Manufacturer
     success_url = reverse_lazy("taxi:manufacturer-list")
+    success_message = "Done!"
 
 
 class CarListView(LoginRequiredMixin, generic.ListView):
@@ -158,9 +160,10 @@ class CarUpdateView(generic.UpdateView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarDeleteView(generic.DeleteView):
+class CarDeleteView(SweetifySuccessMixin, generic.DeleteView):
     model = Car
     success_url = reverse_lazy("taxi:car-list")
+    success_message = "Done!"
 
 
 class DriverListView(LoginRequiredMixin, generic.ListView):
@@ -309,13 +312,25 @@ class DriverSettingsView(
         return HttpResponseRedirect("/")
 
 
+def is_ajax(request):
+    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+
 @login_required
-def like_and_unlike(request, id, pk):  # noqa
+def like_and_unlike(request, id, pk):
     comment = get_object_or_404(
-        CarComments.objects, id=request.POST.get("car.comment.id"), pk=pk
+        CarComments, id=request.POST.get("ind") # ind - because i take it in my js script
     )
+
     if comment.likes.filter(id=request.user.id).exists():
         comment.likes.remove(request.user)
+        comment.save()
     else:
         comment.likes.add(request.user)
-    return HttpResponseRedirect(reverse("taxi:car-detail", args=[str(id)]))
+        comment.save()
+    context = {"comment": comment}
+    if is_ajax(request):
+        print(context)
+        html = render_to_string("taxi/like-section.html", context=context, request=request)
+        print(223)
+        return JsonResponse({"form": html})
+    return HttpResponseRedirect(reverse_lazy("taxi: car-detail"), args=[pk])

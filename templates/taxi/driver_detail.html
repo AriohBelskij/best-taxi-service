@@ -1,13 +1,11 @@
 {% extends "base.html" %}
 
+
 {% block content %}
   <h1>
     {{ driver.username }}
     {% if user.is_staff and user.id != driver.id %}
-{#      <a href="{% url 'taxi:driver-delete' pk=driver.id %}" class="btn btn-danger link-to-page">#}
-{#        Delete this user#}
-{#      </a>#}
-       <a class="btn btn-danger" data-mdb-toggle="modal" data-mdb-target="#delete{{ driver.id }}">
+       <a class="btn btn-danger link-to-page" data-mdb-toggle="modal" data-mdb-target="#delete{{ driver.id }}">
           Delete driver <i class="fas fa-trash-alt"></i>
           </a>
           {% include "taxi/driver_confirm_delete.html" %}
