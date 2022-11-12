@@ -1,4 +1,4 @@
-<form action="cars/{{ car.id }}/comment/{{ comment.id }}/like/" method="POST" >
+<form action="cars/{{ car.id }}/comment/{{ comment.id }}/like/" method="POST">
   {% csrf_token %}
   {% if user in comment.likes.all %}
     <button type="submit" name="car_id" id="like" value="{{ comment.id }}" class="comment_text">

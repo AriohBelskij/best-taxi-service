@@ -7,17 +7,17 @@
 
       <div class="modal-body">
         <div class="confirm_delete">
-          <h2>Delete  {{ car.model }}?</h2>
-          </div>
-            </div>
+          <h2>Delete {{ car.model }}?</h2>
+        </div>
+      </div>
       <div class="modal-footer">
 
-    <form action="{% url "taxi:car-delete" pk=car.id %}" method="post">
-      {% csrf_token %}
+        <form action="{% url "taxi:car-delete" pk=car.id %}" method="post">
+          {% csrf_token %}
 
-      <input type="submit" value="Yes" class="btn btn-danger">
-      <button type="button" class="btn btn-success" data-mdb-dismiss="modal">cancel</button>
-    </form>
+          <input type="submit" value="Yes" class="btn btn-danger">
+          <button type="button" class="btn btn-success" data-mdb-dismiss="modal">cancel</button>
+        </form>
       </div>
     </div>
   </div>
