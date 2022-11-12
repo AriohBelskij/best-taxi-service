@@ -6,11 +6,7 @@
     {{ car.model }}
   </h1>
   {% load static %}
-
-
-
   {% load ratings %}
-
   {% ratings object %}
 
   <div>{% if car in user.cars.all %}
@@ -120,4 +116,3 @@
 
   </div>
 {% endblock %}
-

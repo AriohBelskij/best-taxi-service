@@ -3,7 +3,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormMixin
 from django.views import generic
@@ -74,10 +74,11 @@ class ManufacturerDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class ManufacturerCreateView(LoginRequiredMixin, generic.CreateView):
+class ManufacturerCreateView(LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView):
     model = Manufacturer
     fields = "__all__"
     success_url = reverse_lazy("taxi:manufacturer-list")
+    success_message = "Done! manufacturer creadated!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
@@ -123,7 +124,6 @@ class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
     form_class = CarCommentForm
     queryset = Car.objects.all().prefetch_related("comments_car__likes__car_comment")
 
-
     def post(self, request, *args, **kwargs):
         form = self.get_form()
         if form.is_valid:
@@ -144,7 +144,6 @@ class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
         return super().form_valid(form)
 
 
-
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
 class CarCreateView(LoginRequiredMixin, generic.CreateView):
     model = Car
@@ -153,10 +152,11 @@ class CarCreateView(LoginRequiredMixin, generic.CreateView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarUpdateView(generic.UpdateView):
+class CarUpdateView(SweetifySuccessMixin, generic.UpdateView):
     model = Car
     form_class = CarForm
     success_url = reverse_lazy("taxi:car-list")
+    success_message = "Done!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
@@ -241,7 +241,7 @@ class DriverDeleteView(
 def toggle_assign_to_car(request, pk):
     driver = Driver.objects.get(id=request.user.id)
     if (
-        Car.objects.get(id=pk) in driver.cars.all()
+            Car.objects.get(id=pk) in driver.cars.all()
     ):  # probably could check if car exists
         driver.cars.remove(pk)
     else:
@@ -264,9 +264,6 @@ class CommentDeleteView(SweetifySuccessMixin, generic.DeleteView):
     model = CarComments
     success_url = reverse_lazy("taxi:car-list")
     success_message = "Comment successfully deleted"
-
-
-
 
     def get_success_url(self, **kwargs):
         return reverse_lazy(
@@ -315,10 +312,11 @@ class DriverSettingsView(
 def is_ajax(request):
     return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
 
+
 @login_required
 def like_and_unlike(request, *args, **kwargs):
     comment = get_object_or_404(
-        CarComments, id=request.POST.get("ind") # ind - because i take it in my js script
+        CarComments, id=request.POST.get("ind")  # ind - because i take it in my js script
     )
 
     if comment.likes.filter(id=request.user.id).exists():
