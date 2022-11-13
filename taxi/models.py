@@ -52,7 +52,12 @@ class CarComments(models.Model):
         Car, on_delete=models.CASCADE, related_name="comments_car"
     )
     driver = models.ForeignKey(
-        Driver, on_delete=models.CASCADE, default=None, blank=True, null=True, related_name="author_comment"
+        Driver,
+        on_delete=models.CASCADE,
+        default=None,
+        blank=True,
+        null=True,
+        related_name="author_comment",
     )
     text = models.TextField(verbose_name="text")
     created = models.DateTimeField(auto_now_add=True)

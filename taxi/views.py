@@ -74,7 +74,9 @@ class ManufacturerDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class ManufacturerCreateView(LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView):
+class ManufacturerCreateView(
+    LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView
+):
     model = Manufacturer
     fields = "__all__"
     success_url = reverse_lazy("taxi:manufacturer-list")
@@ -122,7 +124,9 @@ class CarListView(LoginRequiredMixin, generic.ListView):
 class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
     model = Car
     form_class = CarCommentForm
-    queryset = Car.objects.all().prefetch_related("comments_car__likes__car_comment")
+    queryset = Car.objects.all().prefetch_related(
+        "comments_car__likes__car_comment"
+    )
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -145,7 +149,9 @@ class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarCreateView(LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView):
+class CarCreateView(
+    LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView
+):
     model = Car
     form_class = CarForm
     success_url = reverse_lazy("taxi:car-list")
@@ -241,9 +247,7 @@ class DriverDeleteView(
 @login_required
 def toggle_assign_to_car(request, pk):
     driver = Driver.objects.get(id=request.user.id)
-    if (
-            Car.objects.get(id=pk) in driver.cars.all()
-    ):
+    if Car.objects.get(id=pk) in driver.cars.all():
         driver.cars.remove(pk)
     else:
         driver.cars.add(pk)
@@ -311,13 +315,14 @@ class DriverSettingsView(
 
 
 def is_ajax(request):
-    return request.META.get('HTTP_X_REQUESTED_WITH') == 'XMLHttpRequest'
+    return request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
 
 
 @login_required
 def like_and_unlike(request, *args, **kwargs):
     comment = get_object_or_404(
-        CarComments, id=request.POST.get("key")  # take key from js script in base.html
+        CarComments,
+        id=request.POST.get("key"),  # take key from js script in base.html
     )
 
     if comment.likes.filter(id=request.user.id).exists():
@@ -329,6 +334,10 @@ def like_and_unlike(request, *args, **kwargs):
     context = {"comment": comment}
     if is_ajax(request):
         print(context)
-        html = render_to_string("taxi/like-section.html", context=context, request=request)
+        html = render_to_string(
+            "taxi/like-section.html", context=context, request=request
+        )
         return JsonResponse({"form": html})
-    return HttpResponseRedirect(reverse_lazy("taxi: car-detail"), args=[kwargs["pk"]])
+    return HttpResponseRedirect(
+        reverse_lazy("taxi: car-detail"), args=[kwargs["pk"]]
+    )
