@@ -32,7 +32,7 @@
           $.ajax({
              type: "POST",
               url: make_url,
-              data: {"ind": pk, "csrfmiddlewaretoken": "{{ csrf_token }}" },
+              data: {"key": pk, "csrfmiddlewaretoken": "{{ csrf_token }}" },
               dataType: "json",
               success: function(response){
                   $(`#like-section-${pk}`).html(response["form"])

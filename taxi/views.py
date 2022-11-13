@@ -78,7 +78,7 @@ class ManufacturerCreateView(LoginRequiredMixin, SweetifySuccessMixin, generic.C
     model = Manufacturer
     fields = "__all__"
     success_url = reverse_lazy("taxi:manufacturer-list")
-    success_message = "Done! manufacturer creadated!"
+    success_message = "Done! manufacturer created!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
@@ -145,10 +145,11 @@ class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarCreateView(LoginRequiredMixin, generic.CreateView):
+class CarCreateView(LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView):
     model = Car
     form_class = CarForm
     success_url = reverse_lazy("taxi:car-list")
+    success_message = "Done!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
@@ -167,7 +168,7 @@ class CarDeleteView(SweetifySuccessMixin, generic.DeleteView):
 
 
 class DriverListView(LoginRequiredMixin, generic.ListView):
-    model = Driver
+    model = get_user_model()
     paginate_by = 4
     queryset = Driver.objects.all()
 
@@ -189,13 +190,13 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
 
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Driver
+    model = get_user_model()
     queryset = Driver.objects.all().prefetch_related("cars__manufacturer")
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
 class DriverCreateView(generic.CreateView):
-    model = Driver
+    model = get_user_model()
     form_class = DriverCreationForm
     success_url = reverse_lazy("taxi:driver-list")
 
@@ -203,7 +204,7 @@ class DriverCreateView(generic.CreateView):
 class DriverLicenseUpdateView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.UpdateView
 ):
-    model = Driver
+    model = get_user_model()
     form_class = DriverLicenseUpdateForm
     success_url = reverse_lazy("taxi:driver-list")
     success_message = "License successfully update"
@@ -231,7 +232,7 @@ class DriverLicenseUpdateView(
 class DriverDeleteView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.DeleteView
 ):
-    model = Driver
+    model = get_user_model()
     success_url = reverse_lazy("taxi:driver-list")
     permission_required = "taxi.delete-driver"
     success_message = "User deleted successfully"
@@ -242,7 +243,7 @@ def toggle_assign_to_car(request, pk):
     driver = Driver.objects.get(id=request.user.id)
     if (
             Car.objects.get(id=pk) in driver.cars.all()
-    ):  # probably could check if car exists
+    ):
         driver.cars.remove(pk)
     else:
         driver.cars.add(pk)
@@ -316,7 +317,7 @@ def is_ajax(request):
 @login_required
 def like_and_unlike(request, *args, **kwargs):
     comment = get_object_or_404(
-        CarComments, id=request.POST.get("ind")  # ind - because i take it in my js script
+        CarComments, id=request.POST.get("key")  # take key from js script in base.html
     )
 
     if comment.likes.filter(id=request.user.id).exists():
@@ -329,6 +330,5 @@ def like_and_unlike(request, *args, **kwargs):
     if is_ajax(request):
         print(context)
         html = render_to_string("taxi/like-section.html", context=context, request=request)
-        print(223)
         return JsonResponse({"form": html})
     return HttpResponseRedirect(reverse_lazy("taxi: car-detail"), args=[kwargs["pk"]])
