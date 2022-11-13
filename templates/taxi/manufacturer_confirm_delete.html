@@ -1,14 +1,24 @@
-{% extends "base.html" %}
+<div class="modal fade" id="delete{{ manufacturer.id }}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header window-header">
+        <h5 class="modal-title window-title" id="exampleModalLabel" >Confirm deletion</h5>
+      </div>
+      <div class="modal-body">
+        <div class="confirm_delete">
+          <h3 class="window-text">Delete  <strong>{{ manufacturer.name }}</strong>?</h3>
+          <p><strong>Also all cars from manufacturer will be delete!</strong></p>
+          </div>
+            </div>
 
-{% block content %}
-  <div class="confirm_delete">
-  <h3>Delete {{ manufacturer.name }}?</h3>
-    <p>All machines of this manufacturer will also be deleted</p>
-  <form action="" method="post">
-    {% csrf_token %}
 
-    <input type="submit" value="Yes" class="btn btn-danger">
-    <a href="/manufacturers/" class="btn btn-primary" role="button">Cancel</a>
-  </form>
+      <div class="modal-footer">
+        <form action="{% url "taxi:manufacturer-delete" pk=manufacturer.id %}" method="post">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-danger">Yes, delete</button>
+          <button type="button" class="btn btn-success" data-mdb-dismiss="modal">cancel</button>
+        </form>
+      </div>
     </div>
-{% endblock %}
+  </div>
+</div>

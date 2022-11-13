@@ -1,4 +1,4 @@
-from django.urls import path, include
+from django.urls import path
 
 from .views import (
     index,
@@ -102,9 +102,9 @@ urlpatterns = [
         name="registration-complete",
     ),
     path(
-        "cars/<int:id>/comment/<int:pk>/like",
+        "cars/<int:id>/comment/<int:pk>/like/",
         like_and_unlike,
-        name="like_comment",
+        name="like-comment",
     ),
 ]
 

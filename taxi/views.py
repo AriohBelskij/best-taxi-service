@@ -1,14 +1,15 @@
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.shortcuts import render, get_object_or_404
-from django.urls import reverse_lazy, reverse
+from django.urls import reverse_lazy
 from django.utils.decorators import method_decorator
 from django.views.generic.edit import FormMixin
 from django.views import generic
 from django.contrib.auth.mixins import LoginRequiredMixin
 from sweetify.views import SweetifySuccessMixin
+from django.template.loader import render_to_string
 
 from .models import Driver, Car, Manufacturer, CarComments
 from .forms import (
@@ -73,10 +74,13 @@ class ManufacturerDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class ManufacturerCreateView(LoginRequiredMixin, generic.CreateView):
+class ManufacturerCreateView(
+    LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView
+):
     model = Manufacturer
     fields = "__all__"
     success_url = reverse_lazy("taxi:manufacturer-list")
+    success_message = "Done! manufacturer created!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
@@ -90,9 +94,10 @@ class ManufacturerUpdateView(
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class ManufacturerDeleteView(generic.DeleteView):
+class ManufacturerDeleteView(SweetifySuccessMixin, generic.DeleteView):
     model = Manufacturer
     success_url = reverse_lazy("taxi:manufacturer-list")
+    success_message = "Done!"
 
 
 class CarListView(LoginRequiredMixin, generic.ListView):
@@ -119,6 +124,9 @@ class CarListView(LoginRequiredMixin, generic.ListView):
 class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
     model = Car
     form_class = CarCommentForm
+    queryset = Car.objects.all().prefetch_related(
+        "comments_car__likes__car_comment"
+    )
 
     def post(self, request, *args, **kwargs):
         form = self.get_form()
@@ -141,27 +149,32 @@ class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarCreateView(LoginRequiredMixin, generic.CreateView):
+class CarCreateView(
+    LoginRequiredMixin, SweetifySuccessMixin, generic.CreateView
+):
     model = Car
     form_class = CarForm
     success_url = reverse_lazy("taxi:car-list")
+    success_message = "Done!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarUpdateView(generic.UpdateView):
+class CarUpdateView(SweetifySuccessMixin, generic.UpdateView):
     model = Car
     form_class = CarForm
     success_url = reverse_lazy("taxi:car-list")
+    success_message = "Done!"
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class CarDeleteView(generic.DeleteView):
+class CarDeleteView(SweetifySuccessMixin, generic.DeleteView):
     model = Car
     success_url = reverse_lazy("taxi:car-list")
+    success_message = "Done!"
 
 
 class DriverListView(LoginRequiredMixin, generic.ListView):
-    model = Driver
+    model = get_user_model()
     paginate_by = 4
     queryset = Driver.objects.all()
 
@@ -183,13 +196,13 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
 
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):
-    model = Driver
+    model = get_user_model()
     queryset = Driver.objects.all().prefetch_related("cars__manufacturer")
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
 class DriverCreateView(generic.CreateView):
-    model = Driver
+    model = get_user_model()
     form_class = DriverCreationForm
     success_url = reverse_lazy("taxi:driver-list")
 
@@ -197,7 +210,7 @@ class DriverCreateView(generic.CreateView):
 class DriverLicenseUpdateView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.UpdateView
 ):
-    model = Driver
+    model = get_user_model()
     form_class = DriverLicenseUpdateForm
     success_url = reverse_lazy("taxi:driver-list")
     success_message = "License successfully update"
@@ -225,7 +238,7 @@ class DriverLicenseUpdateView(
 class DriverDeleteView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.DeleteView
 ):
-    model = Driver
+    model = get_user_model()
     success_url = reverse_lazy("taxi:driver-list")
     permission_required = "taxi.delete-driver"
     success_message = "User deleted successfully"
@@ -234,9 +247,7 @@ class DriverDeleteView(
 @login_required
 def toggle_assign_to_car(request, pk):
     driver = Driver.objects.get(id=request.user.id)
-    if (
-        Car.objects.get(id=pk) in driver.cars.all()
-    ):  # probably could check if car exists
+    if Car.objects.get(id=pk) in driver.cars.all():
         driver.cars.remove(pk)
     else:
         driver.cars.add(pk)
@@ -303,12 +314,30 @@ class DriverSettingsView(
         return HttpResponseRedirect("/")
 
 
-def like_and_unlike(request, id, pk):  # noqa
+def is_ajax(request):
+    return request.META.get("HTTP_X_REQUESTED_WITH") == "XMLHttpRequest"
+
+
+@login_required
+def like_and_unlike(request, *args, **kwargs):
     comment = get_object_or_404(
-        CarComments, id=request.POST.get("car.comment.id"), pk=pk
+        CarComments,
+        id=request.POST.get("key"),  # take key from js script in base.html
     )
+
     if comment.likes.filter(id=request.user.id).exists():
         comment.likes.remove(request.user)
+        comment.save()
     else:
         comment.likes.add(request.user)
-    return HttpResponseRedirect(reverse("taxi:car-detail", args=[str(id)]))
+        comment.save()
+    context = {"comment": comment}
+    if is_ajax(request):
+        print(context)
+        html = render_to_string(
+            "taxi/like-section.html", context=context, request=request
+        )
+        return JsonResponse({"form": html})
+    return HttpResponseRedirect(
+        reverse_lazy("taxi: car-detail"), args=[kwargs["pk"]]
+    )

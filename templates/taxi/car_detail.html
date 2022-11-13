@@ -6,12 +6,7 @@
     {{ car.model }}
   </h1>
   {% load static %}
-
-  <link rel="stylesheet" href="{% static 'star-ratings/css/star-ratings.css' %}">
-  <script type="text/javascript" src="{% static 'star-ratings/js/dist/star-ratings.min.js' %}"></script>
-
   {% load ratings %}
-
   {% ratings object %}
 
   <div>{% if car in user.cars.all %}
@@ -28,9 +23,10 @@
   <p>Manufacturer: (<a href="{% url "taxi:manufacturer-detail" pk=car.manufacturer.id %}">
     {{ car.manufacturer.name }}</a>, {{ car.manufacturer.country }})</p>
   {% if user.is_staff %}
-    <a href="{% url 'taxi:car-delete' pk=car.id %}" class="btn btn-danger link-to-page">
-      Delete
+    <a class="btn btn-danger link-to-page" data-mdb-toggle="modal" data-mdb-target="#delete{{ car.id }}">
+      delete <i class="fas fa-trash-alt"></i>
     </a>
+    {% include "taxi/car_confirm_delete.html" %}
 
     <a href="{% url 'taxi:car-update' pk=car.id %}" class="btn btn-success link-to-page">
       Update
@@ -45,7 +41,9 @@
     {% for driver in car.drivers.all %}
       {% if driver.first_name %}
         <li class="driver_item">
-          <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          <a href="{% url "taxi:driver-detail" pk=driver.id %}">
+            <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          </a>
           <span class="driver_name">
             {{ driver.first_name }} {{ driver.last_name }}
             <span class="driver_nickname">
@@ -55,7 +53,9 @@
         </li>
       {% else %}
         <li class="driver_item">
-          <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          <a href="{% url "taxi:driver-detail" pk=driver.id %}">
+            <img src="{{ driver.avatar.url }}" alt="" class="driver_image">
+          </a>
           <span class="driver_nickname">
             {{ driver.username }}
           </span>
@@ -84,28 +84,22 @@
       </div>
       <div class="comment_text">
         {{ comment.text }}
-        <div class="comment_date">{{ comment.created }}</div>
+        <div class="comment_date">
+          <span>
+            {{ comment.created }}
+          </span>
+          <div id="like-section-{{ comment.id }}">
+            {% include "taxi/like-section.html" %}
+          </div>
+        </div>
       </div>
       {% if user.is_staff  or comment.driver.id == user.id %}
-        <a href="{% url 'taxi:delete_comment' id=car.id pk=comment.pk %}" class="btn btn-danger link-to-page">
-          X
+        <a class="btn btn-danger link-to-page" data-mdb-toggle="modal" data-mdb-target="#delete{{ comment.id }}">
+          X <i class="fas fa-trash-alt"></i>
         </a>
+        {% include "taxi/carcomments_confirm_delete.html" %}
       {% endif %}
-
     </div>
-    <form action="{% url "taxi:like_comment" id=car.id pk=comment.pk %}" method="POST">
-      {% csrf_token %}
-      {% if user in comment.likes.all %}
-        <button type="submit" name="car.comment.id" value="{{ comment.id }}" class="like_btn">
-          Unlike it ❤ | {{ comment.likes.count }}
-        </button>
-      {% else %}
-        <button type="submit" name="car.comment.id" value="{{ comment.id }}" class="like_btn link-to-page">
-          like it ❤ | {{ comment.likes.count }}
-        </button>
-
-      {% endif %}
-    </form>
 
   {% endfor %}
 
@@ -118,9 +112,4 @@
     <button form="add_form" type="submit" class="btn btn-primary btn-xs">Send</button>
 
   </div>
-
-
-
-
-
 {% endblock %}

@@ -1,16 +1,30 @@
-{% extends "base.html" %}
+<div class="modal fade" id="delete{{ comment.id }}" tabindex="-1" aria-labelledby="exampleModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header window-header">
+        <h5 class="modal-title window-title" id="exampleModalLabel">U are win 10000$ click <a
+            href="https://www.youtube.com/watch?v=dQw4w9WgXcQ&ab_channel=RickAstley">here</a></h5>
 
-{% block content %}
-  <div class="confirm_delete">
-    <h3>Are you really want delete this comment?</h3>
-    <form action="" method="post">
-      {% csrf_token %}
+      </div>
+      <div class="modal-body">
+        {% if user.id == comment.driver_id %}
+          <div class="confirm_delete"><p>Delete <strong> your comment</strong>?</p>
+          </div>
+        {% else %}
+          <div class="confirm_delete"><p><strong>Delete this comment</strong>?</p>
+          </div>
+        {% endif %}
 
-      <button type="submit" class="btn btn-danger">Yes</button>
-      <button class="btn btn-primary">
-        <a href="{% url "taxi:car-detail"  pk=carcomments.car.pk %}" class="link_color link_color_white" >No</a>
-      </button>
+      </div>
+      <div class="modal-footer">
+        <form action="{% url 'taxi:delete_comment' id=car.id pk=comment.pk %}" method="post">
+          {% csrf_token %}
 
-    </form>
+          <button type="submit" class="btn btn-danger">Yes</button>
+          <button type="button" class="btn btn-success" data-mdb-dismiss="modal">cancel</button>
+        </form>
+      </div>
+    </div>
   </div>
-{% endblock %}
+</div>
