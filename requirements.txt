@@ -40,3 +40,4 @@ tomli==2.0.1
 tzdata==2022.5
 whitenoise==6.2.0
 yarl==1.8.1
+gunicorn==20.1.0
