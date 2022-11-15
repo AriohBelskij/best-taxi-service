@@ -4,7 +4,7 @@
 
 > Taxi-service!
 
-A site that allows you to manage newspapers and editors, having an appropriate database.
+Web-site for manage local taxi-service with cars, drivers and manufacturers!
 
 ## Check it out!
 
