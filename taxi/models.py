@@ -12,7 +12,7 @@ class Manufacturer(models.Model):
     class Meta:
         ordering = ["name"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.name} {self.country}"
 
 
@@ -25,7 +25,7 @@ class Driver(AbstractUser):
         verbose_name = "driver"
         verbose_name_plural = "drivers"
 
-    def __str__(self):
+    def __str__(self) -> str:
         if self.first_name and self.last_name:
             return f"{self.username} ({self.first_name} {self.last_name})"
         return self.username
@@ -43,7 +43,7 @@ class Car(models.Model):
     class Meta:
         ordering = ["-rating__average"]
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.model
 
 
@@ -65,11 +65,11 @@ class CarComments(models.Model):
     likes = models.ManyToManyField(Driver, related_name="car_comment")
 
     @property
-    def likes_count(self):
+    def likes_count(self) -> int:
         return self.likes.all().count()
 
     class Meta:
         ordering = ("-created",)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f"{self.driver.username} left the comment {self.text[:10]}..."
