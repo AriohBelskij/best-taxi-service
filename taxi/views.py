@@ -103,7 +103,7 @@ class ManufacturerDeleteView(SweetifySuccessMixin, generic.DeleteView):
 class CarListView(LoginRequiredMixin, generic.ListView):
     model = Car
     paginate_by = 4
-    queryset = Car.objects.all().select_related("manufacturer")
+    queryset = Car.objects.select_related("manufacturer",)
 
     def get_context_data(self, *, object_list=None, **kwargs):
         context = super(CarListView, self).get_context_data(**kwargs)
@@ -124,8 +124,8 @@ class CarListView(LoginRequiredMixin, generic.ListView):
 class CarDetailView(LoginRequiredMixin, FormMixin, generic.DetailView):
     model = Car
     form_class = CarCommentForm
-    queryset = Car.objects.all().prefetch_related(
-        "comments_car__likes__car_comment"
+    queryset = Car.objects.prefetch_related(
+        "comments_car__likes__car_comment", "comments_car__driver__cars"
     )
 
     def post(self, request, *args, **kwargs):
@@ -197,7 +197,7 @@ class DriverListView(LoginRequiredMixin, generic.ListView):
 
 class DriverDetailView(LoginRequiredMixin, generic.DetailView):
     model = get_user_model()
-    queryset = Driver.objects.all().prefetch_related("cars__manufacturer")
+    queryset = Driver.objects.prefetch_related("cars__manufacturer",)
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")

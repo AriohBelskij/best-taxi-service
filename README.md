@@ -17,14 +17,23 @@ Python3 must be already installed.
 Clone the [repository](https://github.com/AriohBelskij/best-taxi-service) and run the commands:
 
 ```shell
-cd newspaper-agency
+cd taxi-service
 python3 -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+python manage.py migrate
 python manage.py runserver
 ```
 
 After cloning the repository, you need to go to the root of the project, create and activate the virtual environment, and install the elements necessary for the project. And then start the server.
+
+You can use this to add data to db:
+```shell
+python manage.py loaddata taxi_service_db_data.json
+```
+and use this login and password to test staff Features:
+* username - admin.user
+* password - 1qazcde3
 
 ## Features
 
@@ -33,3 +42,5 @@ What's all the feature and whistles this project can perform?
 * Like and comment system
 * Managing cars, driver & cars directly from website interface.
 * Preaty users profile with avatars
+
+![img.png](img.png)

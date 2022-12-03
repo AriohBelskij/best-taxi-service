@@ -28,7 +28,7 @@ class PublicViewTests(TestCase):
 
 class PrivateViewTests(TestCase):
     def setUp(self) -> None:
-        self.user = get_user_model().objects.create_user(
+        self.user = get_user_model().objects.create_superuser(
             username="Red John", password="9785699S"
         )
         self.client.force_login(self.user)
@@ -77,3 +77,32 @@ class PrivateViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertEqual(list(response.context["car_list"]), list(cars))
         self.assertTemplateUsed(response, "taxi/car_list.html")
+
+    def test_create_driver(self):
+        form_data = {
+            "username": "Red_John",
+            "password1": "qwe123qweE",
+            "password2": "qwe123qweE",
+            "first_name": "Hello",
+            "last_name": "World",
+            "license_number": "HEL10345"
+        }
+
+        self.client.post(reverse("taxi:driver-create"), data=form_data)
+        new_user = get_user_model().objects.get(username=form_data["username"])
+
+        self.assertEqual(new_user.first_name, form_data["first_name"])
+        self.assertEqual(new_user.last_name, form_data["last_name"])
+        self.assertEqual(new_user.license_number, form_data["license_number"])
+
+    def test_driver_search(self):
+        response = self.client.get("/drivers/?username=seb")
+        self.assertEqual(response.status_code, 200)
+        self.assertQuerysetEqual(
+            response.context["driver_list"],
+            get_user_model().objects.filter(username__icontains="seb"),
+        )
+        self.assertNotEqual(
+            response.context["driver_list"],
+            get_user_model().objects.filter(license_number__icontains="seb"),
+        )
