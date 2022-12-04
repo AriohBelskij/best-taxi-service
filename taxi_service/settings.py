@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
+SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "kiOaSjllxIrUEbRaKt8wNv_RW9DBWvk8")
 
 
 
@@ -49,6 +49,7 @@ INSTALLED_APPS = [
     "taxi",
     "sweetify",
     "star_ratings",
+    "storages"
 ]
 
 MIDDLEWARE = [
@@ -149,7 +150,21 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 
 MEDIA_ROOT = os.path.join(BASE_DIR, "static/images")
 
+
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+
+
+AWS_ACCESS_KEY_ID = "AKIA4J33YNUG6W6NMWWL"
+
+AWS_SECRET_ACCESS_KEY = "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"
+
+AWS_STORAGE_BUCKET_NAME = "avatardriver-bucket"
+
+AWS_QUERYSTRING_AUTH = False
+
+AWS_S3_FILE_OWERWRITE = False
