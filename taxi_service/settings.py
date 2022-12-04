@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/4.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY", "kiOaSjllxIrUEbRaKt8wNv_RW9DBWvk8")
+SECRET_KEY = os.environ["DJANGO_SECRET_KEY"]
 
 
 
@@ -159,9 +159,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
 
 
-AWS_ACCESS_KEY_ID = "AKIA4J33YNUG6W6NMWWL"
+AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
 
-AWS_SECRET_ACCESS_KEY = "/GNhPOGPx6ojHWD9J7pUZhitU+3Hpom1mKINobXq"
+AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
 
 AWS_STORAGE_BUCKET_NAME = "avatardriver-bucket"
 

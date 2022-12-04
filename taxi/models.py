@@ -23,10 +23,14 @@ class Manufacturer(models.Model):
 def driver_image_file_path(instance, filename):
     _, extension = os.path.splitext(filename)
     filename = f"{slugify(instance.username)}-{uuid.uuid4()}{extension}"
-    return os.path.join("images/static/images", filename)
+    return "{directory}{basename}{ext}".format(directory="avatars/",
+                                               basename=instance.username,
+                                               ext=extension)
 
 class Driver(AbstractUser):
-    avatar = models.ImageField(null=True, blank=True, default="images/static/default.png", upload_to=driver_image_file_path)
+    avatar = models.ImageField(null=True, blank=True,
+                               default="default.png",
+                               upload_to=driver_image_file_path)
     license_number = models.CharField(max_length=255, unique=True)
 
     class Meta:
