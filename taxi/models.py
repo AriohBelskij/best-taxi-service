@@ -1,7 +1,10 @@
+import os
+import uuid
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.urls import reverse
+from django.utils.text import slugify
 from star_ratings.models import Rating
 
 
@@ -16,8 +19,18 @@ class Manufacturer(models.Model):
         return f"{self.name} {self.country}"
 
 
+def driver_image_file_path(instance, filename):
+    _, extension = os.path.splitext(filename)
+    filename = f"{slugify(instance.username)}-{uuid.uuid4()}{extension}"
+    return os.path.join("static/images", filename)
+
+
 class Driver(AbstractUser):
-    avatar = models.ImageField(null=True, blank=True, default="default.png")
+    avatar = models.ImageField(null=True,
+                               blank=True,
+                               default="default.png",
+                               upload_to=driver_image_file_path)
+
     license_number = models.CharField(max_length=255, unique=True)
 
     class Meta:

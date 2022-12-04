@@ -201,11 +201,11 @@ class DriverDetailView(LoginRequiredMixin, generic.DetailView):
 
 
 @method_decorator(staff_member_required(login_url="/"), name="dispatch")
-class DriverCreateView(generic.CreateView):
+class DriverCreateView(SweetifySuccessMixin, generic.CreateView):
     model = get_user_model()
     form_class = DriverCreationForm
     success_url = reverse_lazy("taxi:driver-list")
-
+    success_message = "Driver successfully create"
 
 class DriverLicenseUpdateView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.UpdateView
