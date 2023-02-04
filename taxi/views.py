@@ -234,7 +234,6 @@ class DriverLicenseUpdateView(
         )
 
 
-@method_decorator(staff_member_required(login_url="/"), name="dispatch")
 class DriverDeleteView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.DeleteView
 ):
@@ -242,6 +241,17 @@ class DriverDeleteView(
     success_url = reverse_lazy("taxi:driver-list")
     permission_required = "taxi.delete-driver"
     success_message = "User deleted successfully"
+    
+    def get(self, request, *args, **kwargs):
+        profile = self.get_object().driver.id
+        if not request.user.is_staff:
+            if request.user.id == profile:
+                return super(DriverDeleteView, self).get(
+                    request, *args, **kwargs
+                )
+        if request.user.is_staff:
+            return super(DriverDeleteView, self).get(request, *args, **kwargs)
+        return HttpResponseRedirect("/")    
 
 
 @login_required
