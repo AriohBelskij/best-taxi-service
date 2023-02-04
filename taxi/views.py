@@ -253,6 +253,7 @@ class DriverDeleteView(
             return super(DriverDeleteView, self).get(request, *args, **kwargs)
         return HttpResponseRedirect("/")    
 
+
 @login_required
 def toggle_assign_to_car(request, pk):
     driver = Driver.objects.get(id=request.user.id)
