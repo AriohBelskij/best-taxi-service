@@ -233,7 +233,7 @@ class DriverLicenseUpdateView(
             "taxi:driver-detail", kwargs={"pk": self.get_object().id}
         )
 
-
+    
 class DriverDeleteView(
     LoginRequiredMixin, SweetifySuccessMixin, generic.DeleteView
 ):
